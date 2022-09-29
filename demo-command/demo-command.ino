@@ -4,6 +4,9 @@
 // Debug Mode -- Uncomment line below to enable
 #define DEBUG_MODE
 
+// Demo BOard
+// 0013A20041BA172C
+
 // For receiving data from Xbee
 int xbee_byte;
 int xbee_str[100];
@@ -18,7 +21,7 @@ bool dataServer = false;
 // For timeouts in communication loops
 unsigned int timer = 0;
 
-#define SENSOR_ADDRESS = "0013A20041EA4519"
+#define SENSOR_ADDRESS "0013A20041BA172C"
 #define timeout 5000uL      // Timeout for receiving next serial byte of data
 #define MSG_TIMEOUT 10000uL // Time in milliseconds to timeout Transmit frames
 
@@ -28,11 +31,12 @@ unsigned int timer = 0;
 #define SWITCH "SWITCH"
 #define ALL "ALL"
 
+void SendFrame(String frame);
 bool CheckValidFrame();
 String GetTransmitMessage();
 int GetFrameLength();
 String GetSenderAddress();
-bool SendMessage(String message);
+bool SendMessage(String message, String address);
 bool WaitForResponse(unsigned long loop_timeout);
 bool ReceiveMessage();
 
@@ -104,8 +108,9 @@ void loop()
           {
             // Parse through the data
             String data_message = GetTransmitMessage();
-            Serial.print(F("Gyroscope Data: "));
+            Serial.print(F("\nGyroscope Data: "));
             Serial.println(data_message);
+            xbee_index = 0;
           }
           else
           {
@@ -129,8 +134,9 @@ void loop()
           {
             // Parse through the data
             String data_message = GetTransmitMessage();
-            Serial.print(F("Potentiometer Data: "));
+            Serial.print(F("\nPotentiometer Data: "));
             Serial.println(data_message);
+            xbee_index = 0;
           }
           else
           {
@@ -154,8 +160,9 @@ void loop()
           {
             // Parse through the data
             String data_message = GetTransmitMessage();
-            Serial.print(F("Switch Status: "));
+            Serial.print(F("\nSwitch Status: "));
             Serial.println(data_message);
+            xbee_index = 0;
           }
           else
           {
@@ -179,8 +186,9 @@ void loop()
           {
             // Parse through the data
             String data_message = GetTransmitMessage();
-            Serial.print(F("All Sensor Data: "));
+            Serial.print(F("\nAll Sensor Data: "));
             Serial.println(data_message);
+            xbee_index = 0;
           }
           else
           {
@@ -199,6 +207,32 @@ void loop()
     }
     server_str = ""; // Clear string for future use
   }
+}
+
+// Send specified frame through XBee port
+void SendFrame(String frame)
+{
+  if (frame != "")
+  {
+    int data_length = frame.length();
+    // DEGUB Serial.print(F("Sending: "));
+    for (int i = 0; i < data_length; i += 2)
+    {
+      int first = CharToHex(frame.charAt(i));
+      int second = CharToHex(frame.charAt(i + 1));
+      int byte_value = (first * 16) + second;
+      Serial1.write(byte_value);
+#ifdef DEBUG_MODE
+      if (byte_value < 0x10)
+      {
+        Serial.print(F("0"));
+      }
+      Serial.print(byte_value, HEX);
+      Serial.print(F(" "));
+#endif
+    }
+  }
+  Serial.println();
 }
 
 // Returns true if start delimiter is valid and if the calculated checksum matches checksum byte, false otherwise
@@ -283,7 +317,7 @@ bool SendMessage(String message, String address)
   String frameID_str = CreateFrameID(frameID);
   String frame = Transmit(frameID_str, address, "FFFE", "00", "00", message);
   Serial.print(F("\nSending message: "));
-  Serial.print(message);
+  Serial.println(message);
   SendFrame(frame);
   // Wait for a response message
   bool receivedSuccess = false;           // Flag for Transmit Status response
@@ -292,7 +326,7 @@ bool SendMessage(String message, String address)
   do
   {
     responseTime = millis() - responseStart; // Get the total response time at the beggining of each loop
-    bool msg_rx = WaitForResponse(1000);     // Wait for a response frame
+    bool msg_rx = WaitForResponse(5000);     // Wait for a response frame
     if (msg_rx == true)
     { // If a message has arrived
       if (CheckValidFrame())
@@ -381,9 +415,6 @@ bool WaitForResponse(unsigned long loop_timeout)
   }
   else
   { // If there was no received response (timed-out)
-#ifdef DEBUG_MODE
-    Serial.println(F("WaitForResponse timeout"));
-#endif
     return false;
   }
 }
@@ -392,16 +423,17 @@ bool WaitForResponse(unsigned long loop_timeout)
 bool ReceiveMessage()
 {
 #ifdef DEBUG_MODE
-  Serial.print(F("Waiting for message"));
+  Serial.println(F("Waiting for message"));
 #endif
   unsigned long responseStart = millis(); // Get the current time
   unsigned long responseTime = 0;         // To get the response time each loop
   bool msg_rx = false;                    // Flag for receiving any message
   bool msg_success = false;               // Flag for receiving the specified message
+  xbee_index = 0;
   do
   {                                          // Timeout loop
     responseTime = millis() - responseStart; // Current time for the loop
-    msg_rx = WaitForResponse(1000);
+    msg_rx = WaitForResponse(10000);
     if (msg_rx == true)
     { // If a message has arrived
       if (CheckValidFrame())
@@ -414,6 +446,7 @@ bool ReceiveMessage()
           Serial.println(rx_data);
 #endif
           msg_success = true;
+          break;
         }
         else
         { // If received different kind of frame
