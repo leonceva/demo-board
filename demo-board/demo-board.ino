@@ -6,6 +6,7 @@
 
 // Debug Mode -- Uncomment line below to enable
 #define DEBUG_MODE
+//#define PRINT_VALUES
 
 // Demo Board
 // 0013A20041BA172C
@@ -171,7 +172,7 @@ void loop()
 
     if (count > 100)
     {
-#ifdef DEBUG_MODE
+#ifdef PRINT_VALUES
       // Output raw
       Serial.print("\n Pitch = ");
       Serial.print(pitch);
@@ -351,10 +352,7 @@ void SendFrame(String frame)
       Serial1.write(byte_value);
       if (byte_value < 0x10)
       {
-        // DEGUB Serial.print(F("0"));
       }
-      // DEGUB Serial.print(byte_value, HEX);
-      // DEGUB Serial.print(F(" "));
     }
   }
   Serial.println();
