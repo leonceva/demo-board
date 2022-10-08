@@ -6,6 +6,7 @@
 
 // Debug Mode -- Uncomment line below to enable
 #define DEBUG_MODE
+//#define PRINT_VALUES
 
 // Demo Board
 // 0013A20041BA172C
@@ -51,6 +52,7 @@ int count = 0;
 #define SWITCH "SWITCH"
 #define ALL "ALL"
 
+void SendFrame(String frame);
 bool CheckValidFrame();
 String GetTransmitMessage();
 int GetFrameLength();
@@ -75,12 +77,11 @@ void setup()
   {
     ; // Wait for serial port to connect
   }
-
+  delay(500);
   // Initialize MPU6050
   while (!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G))
   {
     Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
-    delay(500);
   }
   // Calibrate gyroscope, calibration must be at rest
   mpu.calibrateGyro();
@@ -165,14 +166,13 @@ void loop()
 
     // Analog Voltage
     analogValue = analogRead(28);
-    double analog = ((float)(analogValue) / 1023) * 3.3;
 
     // Digital LED status
     light = digitalRead(11);
 
-    if (count > 15)
+    if (count > 100)
     {
-#ifdef DEBUG_MODE
+#ifdef PRINT_VALUES
       // Output raw
       Serial.print("\n Pitch = ");
       Serial.print(pitch);
@@ -180,8 +180,8 @@ void loop()
       Serial.print(roll);
       Serial.print(" Yaw = ");
       Serial.print(yaw);
-      Serial.print(" Analog Voltage: ");
-      Serial.print(analog);
+      Serial.print(" Analog Value: ");
+      Serial.print(analogValue);
       Serial.print(" LED : ");
       light ? Serial.println("ON\n") : Serial.println("OFF\n");
       count = 0;
@@ -274,24 +274,26 @@ bool SendData(String rx_data, String sender_addr)
   if (rx_data == GYRO)
   {
     // Convert the float values to strings
-    char pitch_str[10];
-    dtostrf(pitch, 2, 2, pitch_str);
-    char roll_str[10];
-    dtostrf(roll, 2, 2, roll_str);
-    char yaw_str[10];
-    dtostrf(yaw, 2, 2, yaw_str);
     String data_str = "";
-    data_str = pitch_str + "," + roll_str + "," + yaw_str;
+    data_str += String(pitch);
+    data_str += ",";
+    data_str += String(roll);
+    data_str += ",";
+    data_str += String(yaw);
     bool tx_status = SendMessage(data_str, sender_addr);
     return tx_status;
   }
   if (rx_data == POT)
   {
     // Convert the float value to string
-    char analog_str[10];
-    dtostrf(analog, 1, 2, analog_str);
     String data_str = "";
-    data_str = analog_str;
+    char analog_str[5];
+    sprintf(analog_str, "%i", analogValue);    
+    Serial.print("Analog Value: "); Serial.println(analogValue);
+    Serial.print("Sending: "); Serial.println(analog_str);
+
+    data_str = String(analog_str);
+    
     bool tx_status = SendMessage(data_str, sender_addr);
     return tx_status;
   }
@@ -312,28 +314,48 @@ bool SendData(String rx_data, String sender_addr)
   if (rx_data == ALL)
   {
     // Convert the float values to strings
-    char pitch_str[10];
-    dtostrf(pitch, 2, 2, pitch_str);
-    char roll_str[10];
-    dtostrf(roll, 2, 2, roll_str);
-    char yaw_str[10];
-    dtostrf(yaw, 2, 2, yaw_str);
-    // Convert the float value to string
-    char analog_str[10];
-    dtostrf(analog, 1, 2, analog_str);
     String data_str = "";
-    data_str = pitch_str + "," + roll_str + "," + yaw_str + "," + analog_str;
+    data_str += String(pitch);
+    data_str += ",";
+    data_str += String(roll);
+    data_str += ",";
+    data_str += String(yaw);
+    data_str += ",";
+    data_str += String(analogValue);
     if (light == true)
     {
+      data_str += ",";
       data_str += "ON";
     }
     else
     {
+      data_str += ",";
       data_str += "OFF";
     }
     bool tx_status = SendMessage(data_str, sender_addr);
     return tx_status;
   }
+}
+
+// Send specified frame through XBee port
+void SendFrame(String frame)
+{
+  if (frame != "")
+  {
+    int data_length = frame.length();
+    // DEGUB Serial.print(F("Sending: "));
+    for (int i = 0; i < data_length; i += 2)
+    {
+      int first = CharToHex(frame.charAt(i));
+      int second = CharToHex(frame.charAt(i + 1));
+      int byte_value = (first * 16) + second;
+      Serial1.write(byte_value);
+      if (byte_value < 0x10)
+      {
+      }
+    }
+  }
+  Serial.println();
 }
 
 // Send a Transmission with the specified message to the specified address. Will wait for a response status for a duration specified by <MSG_TIMEOUT>

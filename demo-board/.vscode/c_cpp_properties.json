@@ -5,6 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/Users/albertol/Downloads/energia-1.8.10E23-windows/energia-1.8.10E23/hardware/energia/msp430/libraries/**",
+                "C:/Users/albertol/Downloads/energia-1.8.10E23-windows/energia-1.8.10E23/hardware/**",
+                "C:/Users/albertol/Downloads/energia-1.8.10E23-windows/energia-1.8.10E23/hardware/energia/msp430/cores/msp430/**",
                 "C:/Users/alberto/Downloads/energia-1.8.10E23/hardware/**",
                 "C:/Users/alberto/Downloads/energia-1.8.10E23/hardware/energia/msp430/cores/msp430/**"
             ],
