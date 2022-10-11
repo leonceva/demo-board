@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {getGyroData, getPotData, getSwitchData, getAllData} from "./api/sensorClient.js"
+import {getGyroData, getPotData, getSwitchData} from "./api/sensorClient.js"
 
 const displayName = name => {
     switch (name) {

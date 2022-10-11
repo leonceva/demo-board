@@ -14,7 +14,7 @@ const Homepage = (props) => {
                 <div className="col m-2">
                     <div className="demo-title row m-2 ps-2 pe-2 fs-1">
                         <div className="col col-1">
-                            <img className="logo" src={logo}></img>                        
+                            <img className="logo" src={logo} alt='logo'></img>                        
                         </div>
                         <div className="col">DEMO BOARD</div>
                     </div>
