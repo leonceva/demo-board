@@ -7,13 +7,13 @@ const SensorDashboard = (props) => {
        <div className="d-flex">
             <div className="dashboard col p-1 position-relative">
                 <div className="row m-1 ps-2 pe-2">
-                    <SensorUnit name="Gyroscope"/>
+                    <SensorUnit name="Gyroscope" disabled={props.automaticMode}/>
                 </div>
                 <div className="row m-1 ps-2 pe-2">
-                    <SensorUnit name="Potentiometer"/>
+                    <SensorUnit name="Potentiometer" disabled={props.automaticMode}/>
                 </div>
                 <div className="row m-1 ps-2 pe-2">
-                    <SensorUnit name="Switch"/>
+                    <SensorUnit name="Switch" disabled={props.automaticMode}/>
                 </div>
             </div>
        </div>
