@@ -105,7 +105,7 @@ const SensorUnit = (props) => {
     <button
       disabled={props.disabled}
       onClick={() => sensorClicked(props.name)}
-      className='border border-2 border-dark rounded-pill pb-3 mt-2 mb-2'
+      className='border border-2 border-dark rounded-pill pb-3 mt-2 mb-2 sensor-button'
       style={{ justifyContent: "center" }}
     >
       <div className='row'>

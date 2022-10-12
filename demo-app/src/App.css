@@ -39,8 +39,35 @@
   min-width: 200px;
 }
 
+.sensor-button{
+  min-width: 250px;
+  box-shadow: 0 10px #999
+}
+.sensor-button:hover{
+  transition: 0.2s;
+  background-color: grey;
+}
+.sensor-button:active{
+  background-color: grey;
+  box-shadow: 0 4px #333;
+  transform: translateY(4px);
+}
+
 .mode-selected{
-  border-bottom: 3px;
-  border-bottom-style: solid;
-  border-color: red;
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 5px;
+  transition-duration: 1s;
+  box-shadow: 0 3px red;
+}
+
+.mode-unselected{
+  text-decoration-color: transparent;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.settings-button{
+  margin-left: 2px;
+  margin-right: 2px;
 }
