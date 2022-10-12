@@ -6,7 +6,10 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-demo_board = DemoCommand()
+try:
+    demo_board = DemoCommand()
+except Exception as e:
+    print("Unable to start Demo Board: %s" % e)
 
 @app.route("/")
 def test():
@@ -14,18 +17,34 @@ def test():
 
 @app.route("/gyro")
 def get_gyro():
-    return(demo_board.getGyroData())
+    try:
+        return(demo_board.getGyroData())
+    except Exception as e:
+        print("Unable to reach Demo Board: %s" % e)
+        return
 
 @app.route("/pot")
 def get_pot():
-    return(demo_board.getPotData())
+    try:
+        return(demo_board.getPotData())
+    except Exception as e:
+        print("Unable to reach Demo Board: %s" % e)
+        return
 
 @app.route("/switch")
 def get_switch():
-    return(demo_board.getSwitchData())
+    try:
+        return(demo_board.getSwitchData())
+    except Exception as e:
+        print("Unable to reach Demo Board: %s" % e)
+        return
 
 @app.route("/all")
 def get_all():
-    return(demo_board.getAllData())
+    try:
+        return(demo_board.getAllData())
+    except Exception as e:
+        print("Unable to reach Demo Board: %s" % e)
+        return
 
 app.run(host="localhost", port=3005)
