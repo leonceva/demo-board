@@ -58,7 +58,7 @@
   margin-left: 5px;
   margin-right: 5px;
   transition-duration: 1s;
-  box-shadow: 0 3px red;
+  box-shadow: 0 3px #0275d8;
 }
 
 .mode-unselected{
@@ -70,4 +70,8 @@
 .settings-button{
   margin-left: 2px;
   margin-right: 2px;
+}
+
+.settings{
+  transition: 0.5;
 }

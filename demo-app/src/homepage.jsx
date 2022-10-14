@@ -4,8 +4,11 @@ import Settings from "./settings";
 import logo from "./nait.jpg";
 import { useState } from "react";
 
+export const DEFAULT_TIMER = 15
+
 const Homepage = (props) => {
   const [automaticMode, setAutomaticMode] = useState(false);
+  const [timerValue, setTimerValue] = useState(DEFAULT_TIMER)
 
   return (
     <>
@@ -26,6 +29,8 @@ const Homepage = (props) => {
                 <Settings
                   automaticMode={automaticMode}
                   setAutomaticMode={setAutomaticMode}
+                  timerValue={timerValue}
+                  setTimerValue={setTimerValue}
                 />
               </div>
             </div>
