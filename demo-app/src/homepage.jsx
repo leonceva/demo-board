@@ -1,14 +1,17 @@
 import React from "react";
-import SensorDashboard from "./sensorValues";
+import SensorDashboard from "./sensorDashboard";
 import Settings from "./settings";
 import logo from "./nait.jpg";
 import { useState } from "react";
 
-export const DEFAULT_TIMER = 15
+export const DEFAULT_MIN_TIMER = 10;
+export const DEFAULT_MAX_TIMER = 30;
 
 const Homepage = (props) => {
   const [automaticMode, setAutomaticMode] = useState(false);
-  const [timerValue, setTimerValue] = useState(DEFAULT_TIMER)
+  const [timerValue, setTimerValue] = useState(DEFAULT_MIN_TIMER)
+  const [pingSensors, setPingSensors] = useState(false)
+  const [isRunning, setIsRunning] = useState(false)
 
   return (
     <>
@@ -31,6 +34,10 @@ const Homepage = (props) => {
                   setAutomaticMode={setAutomaticMode}
                   timerValue={timerValue}
                   setTimerValue={setTimerValue}
+                  pingSensors={pingSensors}
+                  setPingSensors={setPingSensors}
+                  isRunning={isRunning}
+                  setIsRunning={setIsRunning}
                 />
               </div>
             </div>
@@ -39,21 +46,12 @@ const Homepage = (props) => {
                 <h3 className='text-center'>SENSORS</h3>
               </div>
               <div className='row m-1'>
-                <SensorDashboard automaticMode={automaticMode} />
+                <SensorDashboard automaticMode={automaticMode} pingSensors={pingSensors} setPingSensors={setPingSensors} setIsRunning={setIsRunning} />
               </div>
             </div>
           </div>
         </div>
       </div>
-      <p>TODO:</p>
-      <li>Allow enable/disable automatic data retreival</li>
-      <li>Allow specify time of automatic data retrieval</li>
-      <li>With the timer value, pass to SensorDashboard</li>
-      <li>
-        From sensor dashboard, call api, get values of all sensor, send each
-        value as a property to each unit
-      </li>
-      <li>Add instructions</li>
     </>
   );
 };

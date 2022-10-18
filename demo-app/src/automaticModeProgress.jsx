@@ -7,31 +7,31 @@ import ProgressBar from 'react-bootstrap/ProgressBar'
 const AutomaticModeProgress = (props) => {
 
     const [value, setValue] = useState(0)
-    const [isRunning, setIsRunning] = useState(true)
 
     useEffect(() => {
-        if (isRunning){            
+        if (props.isRunning) {
             const interval = setInterval(() => {
                 setValue(oldValue => {
                     const newValue = oldValue + 0.125
-                    if ((newValue === props.timerValue) || (newValue > props.timerValue)){
+                    if ((newValue === props.timerValue) || (newValue > props.timerValue)) {
+                        props.setPingSensors(true)
                         clearInterval(interval)
-                        setIsRunning(false)
+                        props.setIsRunning(false)
                     }
                     return newValue
                 })
             }, 250)
         }
-        else{
-            setIsRunning(true)
+        else {
             setValue(0)
         }
-    }, [isRunning])
+        // eslint-disable-next-line
+    }, [props.isRunning])
 
-    return(
+    return (
         <div className="pt m-2">
             {/*{`${"%.2s", value} sec`}*/}
-            <ProgressBar animated="true" min={0} now={value} max={props.timerValue}/>
+            <ProgressBar animated="true" min={0} now={value} max={props.timerValue} />
         </div>
     )
 }

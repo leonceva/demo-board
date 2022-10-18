@@ -43,7 +43,7 @@
   min-width: 250px;
   box-shadow: 0 10px #999
 }
-.sensor-button:hover{
+.sensor-button:hover:active{
   transition: 0.2s;
   background-color: grey;
 }

@@ -1,14 +1,30 @@
 #!/usr/bin/python3
 from digi.xbee.devices import *
 from datetime import datetime
+import os
 
 SENSOR_ADDRESS = "0013A20041BA172C"
-USB_PORT = "/dev/ttyUSB1"
 
 class DemoCommand:
     def __init__(self):
-        self.instructions = ["GYRO", "POT", "SWITCH", "ALL"]
-        self.command_unit = XBeeDevice(USB_PORT, 9600)
+        if (os.path.exists("/dev/ttyUSB0")):
+            try:
+                self._usb_port = "/dev/ttyUSB0"
+                self.command_unit = XBeeDevice(self._usb_port, 9600)
+                print("Xbee Unit on port USB0")
+            except:
+                print("USB0 - Not Xbee Unit")
+        elif (os.path.exists("/dev/ttyUSB1")):
+            try:
+                self._usb_port = "/dev/ttyUSB1"
+                self.command_unit = XBeeDevice(self._usb_port, 9600)
+                print("Xbee Unit on port USB1")
+            except:
+                print("USB1 - Not Xbee Unit")
+        else:
+            exit("Could not find Failed to initialize unit")
+
+        self.instructions = ["GYRO", "POT", "SWITCH", "ALL"]        
         self.sensor_unit = RemoteXBeeDevice(self.command_unit, XBee64BitAddress.from_hex_string(SENSOR_ADDRESS))
         self._last_data = None
         self.data_flag = False
@@ -16,7 +32,7 @@ class DemoCommand:
         try:
             self.command_unit.open()
         except:
-            print("Unable to connect to the board (%s) in port (%s)" % (SENSOR_ADDRESS, USB_PORT))
+            print("Unable to connect to the board (%s) in port (%s)" % (SENSOR_ADDRESS, self._usb_port))
         self.command_unit.add_data_received_callback(self.commandResponse)
 
     def sendCommand(self, selection):
@@ -129,7 +145,7 @@ if __name__ == '__main__':
     while(1): 
         try:       
             data = demo_board.getAllData()
-            print("%s" % data)
+            print("%s\n" % data)
             time.sleep(5)
         except Exception as e:
             print(e)
